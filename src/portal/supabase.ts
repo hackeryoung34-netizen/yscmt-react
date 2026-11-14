@@ -10,6 +10,15 @@ export type PortalIdentity = {
   phone: string;
 };
 
+export type PortalLesson = {
+  id: string;
+  title: string;
+  content: string;
+  video_url: string;
+  sort_order: number;
+  completed_at: string | null;
+};
+
 export type PortalCourse = {
   id: string;
   title: string;
@@ -147,6 +156,13 @@ export async function getMyIdentity() {
 
 export async function listCourses() {
   const rows = await rpc<PortalCourse[]>("portal_list_courses");
+  return Array.isArray(rows) ? rows : [];
+}
+
+export async function listCourseLessons(courseId: string) {
+  const rows = await rpc<PortalLesson[]>("portal_get_course_lessons", {
+    p_course_id: courseId,
+  });
   return Array.isArray(rows) ? rows : [];
 }
 
