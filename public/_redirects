@@ -1,0 +1,4 @@
+/ /portal/ 302
+/portal /portal/ 301
+/portal/assets/* /assets/:splat 200
+/portal/* /index.html 200
