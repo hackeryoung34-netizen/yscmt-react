@@ -4,6 +4,8 @@ import {
   getMyIdentity,
   hasPortalConfiguration,
   listCourses,
+  listCourseLessons,
+  PortalLesson,
   PortalCourse,
   PortalIdentity,
   signIn,
@@ -13,6 +15,8 @@ import {
 export default function PortalPage() {
   const [identity, setIdentity] = useState<PortalIdentity | null>(null);
   const [courses, setCourses] = useState<PortalCourse[]>([]);
+  const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
+  const [lessons, setLessons] = useState<PortalLesson[]>([]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
@@ -25,6 +29,8 @@ export default function PortalPage() {
     if (user.role !== "student") {
       setIdentity(user);
       setCourses([]);
+      setSelectedCourse(null);
+      setLessons([]);
       return;
     }
     const available = await listCourses();
@@ -70,6 +76,21 @@ export default function PortalPage() {
     }
   }
 
+  async function handleViewLessons(courseId: string) {
+    setBusy(true);
+    setError("");
+    setMessage("");
+    try {
+      const availableLessons = await listCourseLessons(courseId);
+      setSelectedCourse(courseId);
+      setLessons(availableLessons);
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Unable to load course lessons.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function handleEnrol(courseId: string) {
     setBusy(true);
     setError("");
@@ -91,6 +112,8 @@ export default function PortalPage() {
     await signOut();
     setIdentity(null);
     setCourses([]);
+    setSelectedCourse(null);
+    setLessons([]);
     setMessage("");
     setError("");
   }
@@ -154,11 +177,15 @@ export default function PortalPage() {
                 <h3 className="mt-2 text-lg font-bold">{course.title}</h3>
                 <p className="mt-2 min-h-12 text-sm leading-6 text-slate-600">{course.description || "Course details will be provided by the instructor."}</p>
                 <p className="mt-4 font-semibold">{course.fee_amount == null ? "Contact YSCMT" : new Intl.NumberFormat("en-NG", { style: "currency", currency: course.fee_currency || "NGN", maximumFractionDigits: 0 }).format(Number(course.fee_amount))}</p>
-                {status ? <span className="mt-5 inline-flex rounded-full bg-slate-100 px-3 py-2 text-sm font-semibold capitalize text-slate-700">{status}</span> : <button disabled={busy} onClick={() => void handleEnrol(course.id)} className="mt-5 w-full rounded-xl bg-blue-700 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-800 disabled:opacity-60">Request enrolment</button>}
+                {status ? <div className="mt-5 flex flex-wrap items-center gap-2"><span className="inline-flex rounded-full bg-slate-100 px-3 py-2 text-sm font-semibold capitalize text-slate-700">{status}</span>{(status === "approved" || status === "completed") && <button disabled={busy} onClick={() => void handleViewLessons(course.id)} className="rounded-xl bg-blue-700 px-3 py-2 text-sm font-semibold text-white disabled:opacity-60">View lessons</button>}</div> : <button disabled={busy} onClick={() => void handleEnrol(course.id)} className="mt-5 w-full rounded-xl bg-blue-700 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-800 disabled:opacity-60">Request enrolment</button>}
               </article>;
             })}
           </div>}
         </section>
+        {selectedCourse && <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-xl font-bold">Course lessons</h2><p className="mt-1 text-sm text-slate-500">Only approved or completed enrolments can view lesson content.</p></div><button onClick={() => { setSelectedCourse(null); setLessons([]); }} className="rounded-lg border px-3 py-2 text-sm">Close</button></div>
+          {lessons.length === 0 ? <p className="mt-5 rounded-xl bg-slate-50 p-4 text-sm text-slate-600">No active lessons are available for this course yet.</p> : <ol className="mt-5 space-y-3">{lessons.map((lesson, index) => <li key={lesson.id} className="rounded-xl border border-slate-200 p-4"><div className="flex items-center justify-between gap-3"><h3 className="font-semibold">{index + 1}. {lesson.title}</h3>{lesson.completed_at && <span className="rounded-full bg-green-100 px-2 py-1 text-xs font-semibold text-green-800">Completed</span>}</div>{lesson.content && <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-slate-600">{lesson.content}</p>}{lesson.video_url && <a href={lesson.video_url} target="_blank" rel="noreferrer" className="mt-3 inline-block text-sm font-semibold text-blue-700 underline">Open lesson video</a>}</li>)}</ol>}
+        </section>}
       </div>
     </main>
   );
