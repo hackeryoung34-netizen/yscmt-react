@@ -13,3 +13,9 @@ body {
   color: white;
   font-family: Inter, sans-serif;
 }
+
+
+/* YSCMT Admin UI typography scale */
+html{font-size:15px}
+body{font-size:14px;line-height:1.55}
+button,input,select,textarea{font-size:14px}
