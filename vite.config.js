@@ -4,6 +4,7 @@ import tailwindcss from "@tailwindcss/vite";
 import svgr from "vite-plugin-svgr";
 
 export default defineConfig({
+  base: "/portal/",
   plugins: [
     react(),
     svgr({ svgrOptions: { exportType: "named", namedExport: "ReactComponent" } }),
