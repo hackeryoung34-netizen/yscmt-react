@@ -24,39 +24,39 @@ function Sidebar() {
           <FaHome /> Dashboard
         </Link>
 
-        <Link to="/admin/courses">
+        <Link to="/courses">
           <FaBook /> Courses
         </Link>
 
-        <Link to="/admin/lessons">
+        <Link to="/lessons">
           <FaVideo /> Lessons
         </Link>
 
-        <Link to="/admin/students">
+        <Link to="/students">
           <FaUsers /> Students
         </Link>
 
-        <Link to="/admin/quizzes">
+        <Link to="/quiz-attempts">
           <FaClipboardCheck /> Quiz Attempts
         </Link>
 
-        <Link to="/admin/certificates">
+        <Link to="/certificates">
           <FaCertificate /> Certificates
         </Link>
 
-        <Link to="/admin/payments">
+        <Link to="/payments">
           <FaMoneyBill /> Payments
         </Link>
 
-        <Link to="/admin/notifications">
+        <Link to="/notifications">
           <FaBell /> Notifications
         </Link>
 
-        <Link to="/admin/profile">
+        <Link to="/profile">
           <FaUser /> Profile
         </Link>
 
-        <Link to="/admin/settings">
+        <Link to="/settings">
           <FaCog /> Settings
         </Link>
 
