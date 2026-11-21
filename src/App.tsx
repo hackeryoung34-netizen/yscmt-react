@@ -36,8 +36,9 @@ export default function App() {
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/profile" element={<UserProfiles />} />
-          <Route path="/admin" element={<AdminDashboard />} />
         </Route>
+
+        <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="*" element={<NotFound />} />
