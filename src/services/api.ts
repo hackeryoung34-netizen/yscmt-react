@@ -4,6 +4,8 @@ const API_BASE_URL =
   import.meta.env.VITE_API_URL ||
   "http://127.0.0.1:8000/api/";
 
+const APP_BASE_PATH = import.meta.env.BASE_URL || "/portal/";
+
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
@@ -14,11 +16,7 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("access");
-
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-
+    if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
   },
   (error) => Promise.reject(error)
@@ -39,7 +37,7 @@ api.interceptors.response.use(
       if (!refresh) {
         localStorage.removeItem("access");
         localStorage.removeItem("refresh");
-        window.location.href = "/signin";
+        window.location.href = `${APP_BASE_PATH}signin`;
         return Promise.reject(error);
       }
 
@@ -50,21 +48,14 @@ api.interceptors.response.use(
           `${API_BASE_URL}token/refresh/`,
           { refresh }
         );
-
         const newAccess = response.data.access;
-
         localStorage.setItem("access", newAccess);
-
-        originalRequest.headers.Authorization =
-          `Bearer ${newAccess}`;
-
+        originalRequest.headers.Authorization = `Bearer ${newAccess}`;
         return api(originalRequest);
       } catch (refreshError) {
         localStorage.removeItem("access");
         localStorage.removeItem("refresh");
-
-        window.location.href = "/signin";
-
+        window.location.href = `${APP_BASE_PATH}signin`;
         return Promise.reject(refreshError);
       }
     }
