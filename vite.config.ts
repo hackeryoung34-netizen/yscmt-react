@@ -2,8 +2,9 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import svgr from "vite-plugin-svgr";
 
-// https://vite.dev/config/
+// The portal is intended to be served from https://yscmtenterprise.ng/portal.
 export default defineConfig({
+  base: "/portal/",
   plugins: [
     react(),
     svgr({
