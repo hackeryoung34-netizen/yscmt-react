@@ -1,8 +1,12 @@
 import axios from "axios";
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL ||
-  "http://127.0.0.1:8000/api/";
+// Production must use the same-origin /api proxy or an explicit VITE_API_URL.
+// Keep localhost only for local development; never ship a localhost API URL.
+const configuredApiUrl = import.meta.env.VITE_API_URL;
+const API_BASE_URL = (
+  configuredApiUrl ||
+  (import.meta.env.DEV ? "http://127.0.0.1:8000/api/" : "/api/")
+).replace(/\/?$/, "/");
 
 const APP_BASE_PATH = import.meta.env.BASE_URL || "/portal/";
 
